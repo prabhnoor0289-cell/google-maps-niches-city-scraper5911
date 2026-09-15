@@ -1,0 +1,39 @@
+{
+    "actorSpecification": 1,
+    "views": {
+        "overview": {
+            "title": "Leads",
+            "transformation": {
+                "fields": [
+                    "title",
+                    "emails",
+                    "phone",
+                    "phonesFromWebsite",
+                    "website",
+                    "address",
+                    "domain",
+                    "linkedIns",
+                    "facebooks",
+                    "instagrams",
+                    "url"
+                ]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": { "label": "Business" },
+                    "emails": { "label": "Emails" },
+                    "phone": { "label": "Phone (Maps)" },
+                    "phonesFromWebsite": { "label": "Phones (website)" },
+                    "website": { "label": "Website" },
+                    "address": { "label": "Address" },
+                    "domain": { "label": "Domain" },
+                    "linkedIns": { "label": "LinkedIn" },
+                    "facebooks": { "label": "Facebook" },
+                    "instagrams": { "label": "Instagram" },
+                    "url": { "label": "Google Maps URL" }
+                }
+            }
+        }
+    }
+}
