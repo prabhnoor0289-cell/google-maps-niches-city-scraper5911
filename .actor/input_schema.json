@@ -1,0 +1,54 @@
+{
+    "title": "Google Maps Contact Details Scraper",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "searchStringsArray": {
+            "title": "Search terms",
+            "type": "array",
+            "description": "What to search for, e.g. 'dentist'. One term per line.",
+            "editor": "stringList",
+            "prefill": ["dentist"]
+        },
+        "locationQuery": {
+            "title": "Location",
+            "type": "string",
+            "description": "Where to search, e.g. 'Chandigarh, India'.",
+            "editor": "textfield",
+            "prefill": "Chandigarh, India"
+        },
+        "maxCrawledPlacesPerSearch": {
+            "title": "Max places per search term",
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 200
+        },
+        "language": {
+            "title": "Language",
+            "type": "string",
+            "editor": "select",
+            "default": "en",
+            "enum": ["en", "es", "fr", "de", "it", "pt", "hi"],
+            "enumTitles": ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Hindi"]
+        },
+        "maxPagesPerWebsite": {
+            "title": "Max pages to scan per website",
+            "type": "integer",
+            "default": 5,
+            "minimum": 1,
+            "maximum": 20
+        },
+        "skipPlacesWithoutWebsite": {
+            "title": "Skip businesses with no website",
+            "type": "boolean",
+            "default": true
+        },
+        "onlyPlacesWithEmail": {
+            "title": "Only keep results that have an email",
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "required": ["searchStringsArray", "locationQuery"]
+}
