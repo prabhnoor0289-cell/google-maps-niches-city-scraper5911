@@ -1,0 +1,5 @@
+.git
+node_modules
+storage
+apify_storage
+crawlee_storage
