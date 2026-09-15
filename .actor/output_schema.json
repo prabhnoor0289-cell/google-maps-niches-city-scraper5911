@@ -1,0 +1,11 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Output schema of the Google Maps Contact Details Scraper",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "Leads with contact details",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}
