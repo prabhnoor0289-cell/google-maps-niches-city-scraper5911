@@ -20,6 +20,7 @@
         "maxCrawledPlacesPerSearch": {
             "title": "Max places per search term",
             "type": "integer",
+            "description": "How many businesses to collect for each search term. Start small while testing.",
             "default": 10,
             "minimum": 1,
             "maximum": 200
@@ -27,6 +28,7 @@
         "language": {
             "title": "Language",
             "type": "string",
+            "description": "Language of the Google Maps results.",
             "editor": "select",
             "default": "en",
             "enum": ["en", "es", "fr", "de", "it", "pt", "hi"],
@@ -35,6 +37,7 @@
         "maxPagesPerWebsite": {
             "title": "Max pages to scan per website",
             "type": "integer",
+            "description": "How many pages of each business website to scan for contact details. Higher finds more but takes longer.",
             "default": 5,
             "minimum": 1,
             "maximum": 20
@@ -42,11 +45,13 @@
         "skipPlacesWithoutWebsite": {
             "title": "Skip businesses with no website",
             "type": "boolean",
+            "description": "Businesses with no website can never have an email, so they are usually not worth keeping.",
             "default": true
         },
         "onlyPlacesWithEmail": {
             "title": "Only keep results that have an email",
             "type": "boolean",
+            "description": "Turn on for a clean lead list. Turn off to keep every business.",
             "default": false
         }
     },
