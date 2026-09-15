@@ -10,16 +10,39 @@ export async function scrapeGoogleMaps({ searchStringsArray, locationQuery, maxC
 
     const crawler = new PlaywrightCrawler({
         requestHandlerTimeoutSecs: 180,
+        navigationTimeoutSecs: 60,
         maxRequestsPerCrawl: searchStringsArray.length,
         launchContext: { launchOptions: { headless: true } },
         async requestHandler({ page, request, log }) {
             const { searchTerm } = request.userData;
             log.info(`Searching Google Maps for "${searchTerm}"`);
 
+            // Google sometimes shows a cookie-consent screen before the map.
+            // Try a few common button labels; ignore if none appear.
+            const consentSelectors = [
+                'button:has-text("Accept all")',
+                'button:has-text("I agree")',
+                'form[action*="consent"] button',
+            ];
+            for (const sel of consentSelectors) {
+                const btn = page.locator(sel).first();
+                if (await btn.count().catch(() => 0)) {
+                    await btn.click({ timeout: 5000 }).catch(() => null);
+                    await page.waitForTimeout(1500);
+                    break;
+                }
+            }
+
+            // Actually wait for the results panel to appear, instead of checking instantly.
             const feed = page.locator('div[role="feed"]');
-            const feedFound = await feed.count().catch(() => 0);
-            if (!feedFound) {
-                log.warning(`No results panel found for "${searchTerm}". Google may have changed its layout.`);
+            const appeared = await feed.first().waitFor({ state: 'visible', timeout: 20000 })
+                .then(() => true)
+                .catch(() => false);
+
+            if (!appeared) {
+                log.warning(`No results panel found for "${searchTerm}". Page title was: "${await page.title().catch(() => 'unknown')}"`);
+                // Save a screenshot so we can see what Google actually showed us.
+                await page.screenshot({ path: `debug-${Date.now()}.png` }).catch(() => null);
                 return;
             }
 
@@ -32,7 +55,7 @@ export async function scrapeGoogleMaps({ searchStringsArray, locationQuery, maxC
                 stableRounds = count === lastCount ? stableRounds + 1 : 0;
                 lastCount = count;
                 await feed.evaluate((el) => el.scrollBy(0, 1200)).catch(() => null);
-                await page.waitForTimeout(1000);
+                await page.waitForTimeout(1200);
             }
 
             const cards = await feed.locator('a[href*="/maps/place/"]').all();
@@ -42,13 +65,15 @@ export async function scrapeGoogleMaps({ searchStringsArray, locationQuery, maxC
                 if (href) hrefs.push(href);
             }
 
+            log.info(`Found ${hrefs.length} listing links for "${searchTerm}".`);
+
             for (const href of hrefs) {
                 if (seen.has(href)) continue;
                 seen.add(href);
                 try {
                     await page.goto(href, { waitUntil: 'domcontentloaded', timeout: 30000 });
                     await page.waitForSelector('h1', { timeout: 15000 }).catch(() => null);
-                    await page.waitForTimeout(600);
+                    await page.waitForTimeout(700);
 
                     const title = await page.locator('h1').first().innerText().catch(() => null);
                     const address = await page.locator('button[data-item-id="address"]').first().innerText().catch(() => null);
